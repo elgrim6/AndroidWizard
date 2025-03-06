@@ -29,3 +29,7 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+tasks.named("publishReleasePublicationToMavenLocal").configure {
+    dependsOn tasks.named("bundleReleaseAar")
+}

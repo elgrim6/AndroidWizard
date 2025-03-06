@@ -168,3 +168,7 @@ java {
     }
 }
 
+tasks.named("publishReleasePublicationToMavenLocal").configure {
+    dependsOn tasks.named("bundleReleaseAar")
+}
+
