@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Wizard</string>
+
+    <string-array name="options">
+        <item>One</item>
+        <item>Two</item>
+        <item>Three</item>
+        <item>Four</item>
+        <item>Five</item>
+    </string-array>
+
+    <string name="reset_button">Reset</string>
+    <string name="click_on_option_to_see_action">Click on option to see action</string>
+    <string name="wizard_indicator">Wizard Indicator</string>
+    <string name="_1_bubble_indicator">1. Bubble Indicator</string>
+    <string name="_2_inverse_tab">2. Inverse Tab</string>
+    <string name="_2_simple_tab_indicator">2. Simple Tab Indicator</string>
+    <string name="_3_inverted_tab_indicator">3. Inverted Tab Indicator</string>
+</resources>

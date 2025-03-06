@@ -1,0 +1,170 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
+
+apply plugin: 'com.android.library'
+
+ext {
+    bintrayRepo = 'AndroidWizardIndicator'
+    bintrayName = 'wizardindicator'
+
+    publishedGroupId = 'com.jswiftdev.wizard'
+    libraryName = 'wizardindicator'
+    artifact = 'wizardindicator'
+
+    libraryDescription = 'An Indicator that tracks the current page within a view pager. Well applicable in a wizard or set up situation'
+
+    siteUrl = 'https://github.com/GathuJamex/AndroidWizard'
+    gitUrl = 'https://github.com/GathuJamex/AndroidWizard.git'
+
+    libraryVersion = '0.1.2'
+
+    developerId = 'gathujamex254'
+    developerName = 'James Gathu'
+    developerEmail = 'gathujamex@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+android {
+    namespace "com.jswiftdev.wizard"
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 34
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+}
+
+
+
+
+//apply plugin: 'com.github.dcendents.android-maven'
+
+group = publishedGroupId                               // Maven Group ID for the artifact
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = 'com.jswiftdev.wizard'
+                artifactId = 'wizardindicator'
+                version = '0.1.2'
+
+                // Use Android AAR artifact instead of `components`
+                artifact("$buildDir/outputs/aar/${project.name}-release.aar")
+                artifact(tasks.named("sourcesJar")) // ✅ Correct way to reference tasks
+                artifact(tasks.named("javadocJar"))
+
+                pom {
+                    name = 'WizardIndicator'
+                    description = 'A simple wizard step indicator for Android'
+                    url = 'https://github.com/jamesgathu/AndroidWizard'
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'jamesgathu'
+                            name = 'James Gathu'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:github.com/jamesgathu/AndroidWizard.git'
+                        developerConnection = 'scm:git:ssh://github.com/jamesgathu/AndroidWizard.git'
+                        url = 'https://github.com/jamesgathu/AndroidWizard'
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+apply plugin: 'com.jfrog.bintray'
+
+version = libraryVersion
+
+if (project.hasProperty("android")) { // Android libraries
+    tasks.register("sourcesJar", Jar) {
+        archiveClassifier.set("sources")
+        from android.sourceSets.main.java.srcDirs
+    }
+
+    tasks.register("javadocJar", Jar) {
+        archiveClassifier.set("javadoc")
+        from android.sourceSets.main.java.srcDirs
+    }
+} else { // Java libraries
+    tasks.register("sourcesJar", Jar) {
+        archiveClassifier.set("sources")
+        from android.sourceSets.main.java.srcDirs
+    }
+}
+
+/*tasks.register("javadocJar", Jar) {
+    archiveClassifier.set("javadoc")
+    from android.sourceSets.main.java.srcDirs
+}*/
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+// Bintray
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = properties.getProperty("bintray.gpg.password")
+                //Optional. The passphrase for GPG signing'
+            }
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
